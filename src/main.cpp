@@ -33,6 +33,10 @@
 #include <unordered_set>
 #include <vector>
 
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#endif
+
 #ifdef _WIN32
 #include <windows.h>
 #include <shellapi.h>
@@ -388,10 +392,13 @@ namespace {
         Windows,
         Linux,
         Mac,
+        IOS,
     };
 
     HostOS hostOS() {
-#ifdef GEODE_IS_MACOS
+#if defined(__APPLE__) && TARGET_OS_IPHONE
+        return HostOS::IOS;
+#elif defined(GEODE_IS_MACOS)
         return HostOS::Mac;
 #else
         static HostOS const hostOperatingSystem = geode::utils::platform::isWine() ? HostOS::Linux : HostOS::Windows;
@@ -403,6 +410,7 @@ namespace {
         switch (hostOS()) {
             case HostOS::Linux: return "linux";
             case HostOS::Mac: return "macos";
+            case HostOS::IOS: return "ios";
             default: return "windows";
         }
     }
@@ -411,6 +419,7 @@ namespace {
         switch (hostOS()) {
             case HostOS::Linux: return "proton/wine";
             case HostOS::Mac: return "native";
+            case HostOS::IOS: return "native";
             default: return "native";
         }
     }
@@ -1025,6 +1034,7 @@ finally {
     }
 
     void writeTerminalScript() {
+        if (hostOS() == HostOS::IOS) return;
         if (hostOS() == HostOS::Linux) {
             writeWineTerminalScript();
         }
@@ -1046,7 +1056,7 @@ finally {
 #endif
 
     void removeLegacyTerminalLogs() {
-        if (hostOS() == HostOS::Mac) {
+        if (hostOS() == HostOS::IOS || hostOS() == HostOS::Mac) {
             return;
         }
         if (hostOS() == HostOS::Windows) {
@@ -1077,6 +1087,7 @@ finally {
 #endif
 
     void resetTerminalLog() {
+        if (hostOS() == HostOS::IOS) return;
         writeTerminalFlags();
         if (hostOS() == HostOS::Linux) {
             ensureWineRuntimeDir();
@@ -1129,6 +1140,10 @@ finally {
     }
 
     void appendTerminalLog(std::string const& message) {
+        if (hostOS() == HostOS::IOS) {
+            log::info("[Afterflow] {}", message);
+            return;
+        }
         if (hostOS() == HostOS::Linux || hostOS() == HostOS::Mac) {
             std::ofstream outputFile(terminalLogPath(), std::ios::app);
             if (outputFile) {
@@ -1208,13 +1223,18 @@ finally {
             return false;
         }
 
-        auto contentText = fmt::format(
-            "Afterflow uses Geode keybinds, so both controls can be changed.\n\n"
-            "{}  cycle stage\n{}  terminal\n\n"
-            "You can set these in Geode's mod settings or keybind popup.",
-            stageKey(),
-            terminalKey()
-        );
+        auto contentText = hostOS() == HostOS::IOS
+            ? fmt::format(
+                "Afterflow is running on iOS.\n\n{}  cycle prediction stages\n\n"
+                "You can change the stage keybind in Geode's mod settings or keybind popup.",
+                stageKey()
+            )
+            : fmt::format(
+                "Afterflow uses Geode keybinds, so both controls can be changed.\n\n"
+                "{}  cycle stage\n{}  terminal\n\n"
+                "You can set these in Geode's mod settings or keybind popup.",
+                stageKey(), terminalKey()
+            );
         createQuickPopup(
             "Afterflow keybinds",
             contentText,
@@ -1607,6 +1627,7 @@ finally {
 #endif
 
     void closeTerminal() {
+        if (hostOS() == HostOS::IOS) return;
         if (hostOS() == HostOS::Linux) {
             ensureWineRuntimeDir();
             auto closePath = wineRuntimeDir() / "close";
@@ -1657,6 +1678,10 @@ finally {
     }
 
     void toggleTerminal() {
+        if (hostOS() == HostOS::IOS) {
+            log::info("Afterflow terminal is unavailable on iOS");
+            return;
+        }
         if (!isTerminalEnabled()) {
             log::info("terminal toggle ignored (disabled)");
             return;
@@ -3106,6 +3131,7 @@ finally {
     }
 
     void startCycleWatcher() {
+        if (hostOS() == HostOS::IOS) return;
         std::error_code errorCode;
         std::filesystem::remove(cycleTriggerPath(), errorCode);
         try {
