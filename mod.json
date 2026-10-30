@@ -27,6 +27,19 @@
             "description": "allow the terminal key to open the afterflow log window",
             "default": true
         },
+        "ios-controls-title": {
+            "type": "title",
+            "name": "iOS controls",
+            "description": "touch-accessible controls for iPhone and iPad"
+        },
+        "ios-stage": {
+            "type": "int",
+            "name": "prediction stage",
+            "description": "select the prediction delay stage on iOS (0-7, 7 disables prediction)",
+            "default": 0,
+            "min": 0,
+            "max": 7
+        },
         "keybinds-title": {
             "type": "title",
             "name": "keybinds",
