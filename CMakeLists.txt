@@ -25,7 +25,7 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
 if ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS" OR IOS)
     if (TARGET GeodeBindings)
-        target_precompile_headers(GeodeBindings PRIVATE "$ENV{GEODE_SDK}/loader/include/Geode/fmod/fmod.hpp")
+        target_compile_options(GeodeBindings PRIVATE "-include" "$ENV{GEODE_SDK}/loader/include/Geode/fmod/fmod.h")
     endif()
 endif()
 
