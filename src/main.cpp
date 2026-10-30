@@ -3120,7 +3120,10 @@ finally {
 
     void cycleStage(int stageDirection = 1) {
         state.stageIndex = (state.stageIndex + stageDirection + STAGE_TABLE_SIZE) % STAGE_TABLE_SIZE;
-          Mod::get()->setSavedValue("stage", state.stageIndex);
+        Mod::get()->setSavedValue("stage", state.stageIndex);
+        if (hostOS() == HostOS::IOS) {
+            Mod::get()->setSettingValue<int>("ios-stage", state.stageIndex);
+        }
         resetPending();
         auto* gameLayer = GameManager::get()->m_playLayer;
         if (gameLayer && !state.wasAutoReleased && state.hasAppliedInput != state.hasRealInput) {
@@ -3201,6 +3204,9 @@ $on_mod(Loaded) {
 
     constexpr int STAGE_SCHEMA_VERSION = 2;
     int savedStageIndex = std::clamp(Mod::get()->getSavedValue<int>("stage", 0), 0, STAGE_TABLE_SIZE - 1);
+    if (hostOS() == HostOS::IOS) {
+        savedStageIndex = std::clamp(Mod::get()->getSettingValue<int>("ios-stage"), 0, STAGE_TABLE_SIZE - 1);
+    }
     if (Mod::get()->getSavedValue<int>("stage-schema", 1) < STAGE_SCHEMA_VERSION) {
         if (savedStageIndex == 6) {
             savedStageIndex = STAGE_TABLE_SIZE - 1;
@@ -3220,6 +3226,14 @@ $on_mod(Loaded) {
         if (!enabled) {
             closeTerminal();
         }
+    });
+    listenForSettingChanges<int>("ios-stage", [](int stageIndex) {
+        if (hostOS() != HostOS::IOS) return;
+        state.stageIndex = std::clamp(stageIndex, 0, STAGE_TABLE_SIZE - 1);
+        Mod::get()->setSavedValue("stage", state.stageIndex);
+        resetPending();
+        applyStage();
+        say("iOS stage setting -> {}", stageBanner());
     });
     say("starting mode: {}", stageBanner());
     say("{} cycles anywhere: 2/2 -> 4/4 -> 8/8 -> 16/8 -> 24/12 -> 32/16 -> 40/20 -> off", stageKey());
