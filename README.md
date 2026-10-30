@@ -70,7 +70,7 @@ requires `kitty` on linux/proton. native windows uses powershell and needs no se
 
 Afterflow includes an iOS build target for Geometry Dash 2.2081 with Geode. The gameplay input interception continues to use Geometry Dash's normal player button handling, so it is designed to work with touchscreen taps as well as supported controllers.
 
-The desktop terminal viewer is disabled on iOS. Messages are sent to the Geode log instead. To change prediction stages without a physical keyboard, open Geode mod settings, find **iOS controls**, and change **prediction stage** (0-6 select a stage; 7 turns prediction off). The existing stage keybind remains available when a supported keyboard or controller is connected.
+The desktop terminal viewer and desktop keybind settings are disabled on iOS. Messages are sent to the Geode log instead. To change prediction stages, open Geode mod settings, find **iOS options**, and change **prediction stage** (0-6 select a stage; 7 turns prediction off). Gameplay input is intercepted through Geometry Dash's normal button handler, so the mod does not require a keyboard to process touchscreen taps.
 
 The iOS build targets arm64 and iOS 14.0 or later. GitHub Actions builds the iOS package alongside the desktop versions. This is a build target, not a guarantee of runtime compatibility on every Geometry Dash or Geode release; test it on the exact iOS setup you use.
 
