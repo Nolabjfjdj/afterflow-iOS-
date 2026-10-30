@@ -11,10 +11,8 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 project(Afterflow VERSION 2.1.6)
 
-# Add all source files inside src (recursively)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
-# Set up the mod binary
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 if (NOT DEFINED ENV{GEODE_SDK})
@@ -25,5 +23,10 @@ endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
-# Set up dependencies, resources, and link Geode.
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS" OR IOS)
+    if (TARGET GeodeBindings)
+        target_precompile_headers(GeodeBindings PRIVATE "$ENV{GEODE_SDK}/loader/include/Geode/fmod/fmod.hpp")
+    endif()
+endif()
+
 setup_geode_mod(${PROJECT_NAME})
