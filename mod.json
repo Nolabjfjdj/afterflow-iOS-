@@ -37,8 +37,8 @@
         },
         "ios-controls-title": {
             "type": "title",
-            "name": "iOS controls",
-            "description": "touch-accessible controls for iPhone and iPad",
+            "name": "iOS options",
+            "description": "iOS-specific prediction settings",
             "platforms": [
                 "ios"
             ]
