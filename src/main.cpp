@@ -3222,13 +3222,15 @@ $on_mod(Loaded) {
     removeLegacyTerminalLogs();
     resetTerminalLog();
     startCycleWatcher();
-    setupKeybinds();
-    listenForSettingChanges<bool>("terminal-enabled", [](bool enabled) {
-        writeTerminalFlags();
-        if (!enabled) {
-            closeTerminal();
-        }
-    });
+    if (hostOS() != HostOS::IOS) {
+        setupKeybinds();
+        listenForSettingChanges<bool>("terminal-enabled", [](bool enabled) {
+            writeTerminalFlags();
+            if (!enabled) {
+                closeTerminal();
+            }
+        });
+    }
     listenForSettingChanges<int64_t>("ios-stage", [](int64_t stageIndex) {
         if (hostOS() != HostOS::IOS) return;
         state.stageIndex = static_cast<int>(std::clamp<int64_t>(stageIndex, 0, STAGE_TABLE_SIZE - 1));
