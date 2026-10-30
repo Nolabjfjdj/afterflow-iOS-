@@ -19,6 +19,9 @@ jobs:
             os: windows-latest
           - name: macOS
             os: macos-latest
+          - name: iOS
+            os: macos-latest
+            target: iOS
 
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
@@ -31,6 +34,7 @@ jobs:
         with:
           sdk: given
           combine: true
+          target: ${{ matrix.config.target }}
 
   package:
     name: Package builds
