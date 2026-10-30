@@ -3209,6 +3209,9 @@ $on_mod(Loaded) {
     if (Mod::get()->getSavedValue<int>("stage-schema", 1) < STAGE_SCHEMA_VERSION) {
         if (savedStageIndex == 6) {
             savedStageIndex = STAGE_TABLE_SIZE - 1;
+            if (hostOS() == HostOS::IOS) {
+                Mod::get()->setSettingValue<int64_t>("ios-stage", savedStageIndex);
+            }
         }
         Mod::get()->setSavedValue("stage", savedStageIndex);
         Mod::get()->setSavedValue("stage-schema", STAGE_SCHEMA_VERSION);
