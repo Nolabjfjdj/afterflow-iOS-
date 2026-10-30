@@ -1223,12 +1223,11 @@ finally {
             return false;
         }
 
-        auto contentText = hostOS() == HostOS::IOS
-            ? fmt::format(
-                "Afterflow is running on iOS.\n\n{}  cycle prediction stages\n\n"
-                "You can change the stage keybind in Geode's mod settings or keybind popup.",
-                stageKey()
-            )
+        auto isIOS = hostOS() == HostOS::IOS;
+        auto contentText = isIOS
+            ? "Afterflow is running on iOS.\n\n"
+              "Open Afterflow's settings in Geode and use the Prediction Stage option "
+              "to choose a stage. The terminal and keyboard shortcuts are unavailable on iOS."
             : fmt::format(
                 "Afterflow uses Geode keybinds, so both controls can be changed.\n\n"
                 "{}  cycle stage\n{}  terminal\n\n"
@@ -1236,7 +1235,7 @@ finally {
                 stageKey(), terminalKey()
             );
         createQuickPopup(
-            "Afterflow keybinds",
+            isIOS ? "Afterflow for iOS" : "Afterflow keybinds",
             contentText,
             "Defaults are fine",
             "Open settings",
@@ -3236,8 +3235,13 @@ $on_mod(Loaded) {
         say("iOS stage setting -> {}", stageBanner());
     });
     say("starting mode: {}", stageBanner());
-    say("{} cycles anywhere: 2/2 -> 4/4 -> 8/8 -> 16/8 -> 24/12 -> 32/16 -> 40/20 -> off", stageKey());
-    say("{} toggles the terminal", terminalKey());
+    if (hostOS() == HostOS::IOS) {
+        say("change the prediction stage in Geode's Afterflow mod settings");
+    }
+    else {
+        say("{} cycles anywhere: 2/2 -> 4/4 -> 8/8 -> 16/8 -> 24/12 -> 32/16 -> 40/20 -> off", stageKey());
+        say("{} toggles the terminal", terminalKey());
+    }
     say("host os: {} ({})", hostOSName(), hostOSDescription());
     checkForUpdates(true);
 }
