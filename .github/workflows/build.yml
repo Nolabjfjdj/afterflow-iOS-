@@ -10,21 +10,34 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build-ios:
+    name: iOS
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the mod
+        uses: geode-sdk/build-geode-mod@main
+        with:
+          sdk: given
+          combine: true
+          target: iOS
+
+  build-desktop:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    needs: build-ios
     strategy:
       fail-fast: false
       matrix:
         config:
           - name: Windows
             os: windows-latest
+            target: Win64
           - name: macOS
             os: macos-latest
-          - name: iOS
-            os: macos-latest
-            target: iOS
-
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
+            target: MacOS
 
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +52,7 @@ jobs:
   package:
     name: Package builds
     runs-on: ubuntu-latest
-    needs: ['build']
+    needs: [build-ios, build-desktop]
 
     steps:
       - uses: geode-sdk/build-geode-mod/combine@main
