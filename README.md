@@ -66,6 +66,14 @@ the service starts with your user session and reads the running compositor envir
 
 requires `kitty` on linux/proton. native windows uses powershell and needs no service. on hyprland the service also applies a floating centered window rule and raises the window above the game. on other compositors the log window still opens but placement is left to the window manager
 
+## iOS support
+
+Afterflow includes an iOS build target for Geometry Dash 2.2081 with Geode. The gameplay input interception continues to use Geometry Dash's normal player button handling, so it is designed to work with touchscreen taps as well as supported controllers.
+
+The desktop terminal viewer is disabled on iOS. Messages are sent to the Geode log instead. To change prediction stages without a physical keyboard, open Geode mod settings, find **iOS controls**, and change **prediction stage** (0-6 select a stage; 7 turns prediction off). The existing stage keybind remains available when a supported keyboard or controller is connected.
+
+The iOS build targets arm64 and iOS 14.0 or later. GitHub Actions builds the iOS package alongside the desktop versions. This is a build target, not a guarantee of runtime compatibility on every Geometry Dash or Geode release; test it on the exact iOS setup you use.
+
 ## build
 
 you need geode sdk 5.11.2 plus cmake 3.29+ plus clang plus the 2.2081 bindings
