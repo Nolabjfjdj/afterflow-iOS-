@@ -19,18 +19,29 @@
         "terminal-title": {
             "type": "title",
             "name": "terminal",
-            "description": "terminal window options"
+            "description": "terminal window options",
+            "platforms": [
+                "win",
+                "mac"
+            ]
         },
         "terminal-enabled": {
             "type": "bool",
             "name": "enable terminal",
             "description": "allow the terminal key to open the afterflow log window",
-            "default": true
+            "default": true,
+            "platforms": [
+                "win",
+                "mac"
+            ]
         },
         "ios-controls-title": {
             "type": "title",
             "name": "iOS controls",
-            "description": "touch-accessible controls for iPhone and iPad"
+            "description": "touch-accessible controls for iPhone and iPad",
+            "platforms": [
+                "ios"
+            ]
         },
         "ios-stage": {
             "type": "int",
@@ -38,26 +49,45 @@
             "description": "select the prediction delay stage on iOS (0-7, 7 disables prediction)",
             "default": 0,
             "min": 0,
-            "max": 7
+            "max": 7,
+            "platforms": [
+                "ios"
+            ]
         },
         "keybinds-title": {
             "type": "title",
             "name": "keybinds",
-            "description": "change geodes keybinding anytime for afterflow"
+            "description": "change geodes keybinding anytime for afterflow",
+            "platforms": [
+                "win",
+                "mac"
+            ]
         },
         "keybind-stage": {
             "type": "keybind",
             "name": "cycle stages",
             "description": "cycle prediction stages",
             "category": "gameplay",
-            "default": ["F6"]
+            "default": [
+                "F6"
+            ],
+            "platforms": [
+                "win",
+                "mac"
+            ]
         },
         "keybind-terminal": {
             "type": "keybind",
             "name": "terminal",
             "description": "open or close the afterflow terminal",
             "category": "universal",
-            "default": ["F9"]
+            "default": [
+                "F9"
+            ],
+            "platforms": [
+                "win",
+                "mac"
+            ]
         }
     }
 }
