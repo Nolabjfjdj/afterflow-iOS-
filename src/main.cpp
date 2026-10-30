@@ -3121,7 +3121,7 @@ finally {
         state.stageIndex = (state.stageIndex + stageDirection + STAGE_TABLE_SIZE) % STAGE_TABLE_SIZE;
         Mod::get()->setSavedValue("stage", state.stageIndex);
         if (hostOS() == HostOS::IOS) {
-            Mod::get()->setSettingValue<int>("ios-stage", state.stageIndex);
+            Mod::get()->setSettingValue<int64_t>("ios-stage", state.stageIndex);
         }
         resetPending();
         auto* gameLayer = GameManager::get()->m_playLayer;
@@ -3204,7 +3204,7 @@ $on_mod(Loaded) {
     constexpr int STAGE_SCHEMA_VERSION = 2;
     int savedStageIndex = std::clamp(Mod::get()->getSavedValue<int>("stage", 0), 0, STAGE_TABLE_SIZE - 1);
     if (hostOS() == HostOS::IOS) {
-        savedStageIndex = std::clamp(Mod::get()->getSettingValue<int>("ios-stage"), 0, STAGE_TABLE_SIZE - 1);
+        savedStageIndex = static_cast<int>(std::clamp<int64_t>(Mod::get()->getSettingValue<int64_t>("ios-stage"), 0, STAGE_TABLE_SIZE - 1));
     }
     if (Mod::get()->getSavedValue<int>("stage-schema", 1) < STAGE_SCHEMA_VERSION) {
         if (savedStageIndex == 6) {
@@ -3226,9 +3226,9 @@ $on_mod(Loaded) {
             closeTerminal();
         }
     });
-    listenForSettingChanges<int>("ios-stage", [](int stageIndex) {
+    listenForSettingChanges<int64_t>("ios-stage", [](int64_t stageIndex) {
         if (hostOS() != HostOS::IOS) return;
-        state.stageIndex = std::clamp(stageIndex, 0, STAGE_TABLE_SIZE - 1);
+        state.stageIndex = static_cast<int>(std::clamp<int64_t>(stageIndex, 0, STAGE_TABLE_SIZE - 1));
         Mod::get()->setSavedValue("stage", state.stageIndex);
         resetPending();
         applyStage();
